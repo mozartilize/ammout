@@ -1,6 +1,6 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import Map from "@/components/Map";
+import Map from "@/components/Map.vue";
 import "@/styles/main.scss";
 
 @Component({
