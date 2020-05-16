@@ -10,7 +10,9 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@types/mapbox-gl": "^1.10.1",
     "core-js": "^3.6.4",
+    "mapbox-gl": "^1.10.1",
     "register-service-worker": "^1.7.1",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
@@ -32,6 +34,8 @@
     "@vue/test-utils": "1.0.0-beta.31",
     "chromedriver": "^80.0.1",
     "eslint": "^6.7.2",
+    "eslint-import-resolver-webpack": "^0.12.1",
+    "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-vue": "^6.2.2",
     "geckodriver": "^1.19.1",
@@ -39,6 +43,7 @@
     "prettier": "^1.19.1",
     "sass-loader": "^8.0.2",
     "typescript": "~3.8.3",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "webpack": "^4.43.0"
   }
 }

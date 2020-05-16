@@ -1,29 +1,24 @@
-<template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
-  </div>
-</template>
-
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import HelloWorld from "./components/HelloWorld.vue";
+import Map from "@/components/Map";
+import "@/styles/main.scss";
 
 @Component({
-  components: {
-    HelloWorld
-  }
+  components: { Map },
 })
 export default class App extends Vue {}
 </script>
+
+<template>
+  <div id="app"><Map /></div>
+</template>
 
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  width: inherit;
+  height: inherit;
 }
 </style>
