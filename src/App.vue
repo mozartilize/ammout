@@ -24,6 +24,8 @@ export default class App extends Vue {
       {{ isAdding ? "Done" : "Add new point" }}
     </button>
     <div class="sidebar" :class="{ shown: !!newPoint }">
+      <input type="text" name="long" :value="newPoint ? newPoint[0] : ''" />
+      <input type="text" name="lat" :value="newPoint ? newPoint[1] : ''" />
       <button>Save</button
       ><button @click="() => setNewPoint(null)">Cancel</button>
     </div>

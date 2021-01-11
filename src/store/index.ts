@@ -1,5 +1,5 @@
 import Vue from "vue";
-import Vuex from "vuex";
+import Vuex, { Store } from "vuex";
 
 import Point from "@/Point";
 import * as issueApi from "@/api/issue";
@@ -13,7 +13,7 @@ interface RootState {
   newPoint: Point | null;
 }
 
-export default new Vuex.Store({
+export default new Store({
   state: {
     points: Array<Point>(),
     loadingPoints: false,

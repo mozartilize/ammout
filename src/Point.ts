@@ -10,4 +10,9 @@ export default class Point extends Array {
     this.id = args[2];
     this.title = args[3];
   }
+
+  setNewCordination(long: number, lat: number) {
+    this[0] = long;
+    this[1] = lat;
+  }
 }

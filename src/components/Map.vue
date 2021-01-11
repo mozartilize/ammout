@@ -61,7 +61,8 @@ export default class Map extends Vue {
     const pulsingDot: PulsingDot = new PulsingDot(200, this.map);
 
     this.map.on("load", async () => {
-      if (this.map == null) return;
+      if (this.map === null) return;
+      const canvas = this.map.getCanvasContainer();
       this.map.addImage("pulsing-dot", pulsingDot, { pixelRatio: 2 });
 
       const source = await this.getSource();
@@ -82,6 +83,7 @@ export default class Map extends Vue {
           features: [],
         },
       });
+
       this.map.addLayer({
         id: "newPoint",
         type: "symbol",
@@ -90,10 +92,34 @@ export default class Map extends Vue {
           "icon-image": "pulsing-dot",
         },
       });
+
+      this.map.on("mouseenter", "newPoint", () => {
+        if (this.map) {
+          canvas.style.cursor = "move";
+        }
+      });
+
+      this.map.on("mouseleave", "newPoint", () => {
+        if (this.map) {
+          canvas.style.cursor = "";
+        }
+      });
+
+      this.map.on("mousedown", "newPoint", e => {
+        // Prevent the default map drag behavior.
+        e.preventDefault();
+
+        if (this.map) {
+          canvas.style.cursor = "grab";
+
+          this.map.on("mousemove", this.onMove);
+          this.map.once("mouseup", this.onUp);
+        }
+      });
     });
   }
 
-  handleDbClick(e: mapboxgl.EventData) {
+  handleDbClick(e: mapboxgl.MapMouseEvent) {
     const p = new Point(...e.lngLat.toArray());
     this.setNewPoint(p);
   }
@@ -114,6 +140,29 @@ export default class Map extends Vue {
         })),
       } as GeoJSON.FeatureCollection,
     };
+  }
+
+  onUp() {
+    // Unbind mouse/touch events
+    if (this.map) {
+      const canvas = this.map.getCanvasContainer();
+      canvas.style.cursor = "";
+      this.map.off("mousemove", this.onMove);
+      this.map.off("touchmove", this.onMove);
+    }
+  }
+
+  onMove(e: mapboxgl.MapTouchEvent | mapboxgl.MapMouseEvent) {
+    if (this.map) {
+      const canvas = this.map.getCanvasContainer();
+      // Set a UI indicator for dragging.
+      canvas.style.cursor = "grabbing";
+
+      // Update the Point feature in `geojson` coordinates
+      // and call setData to the source layer `point` on it.
+      const p = new Point(...e.lngLat.toArray());
+      this.setNewPoint(p);
+    }
   }
 
   beforeDestroy(): void {
