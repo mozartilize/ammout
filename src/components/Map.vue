@@ -76,7 +76,7 @@ export default class Map extends Vue {
       style: "mapbox://styles/mapbox/streets-v9",
     });
 
-    const pulsingDot: PulsingDot = new PulsingDot(200, this.map);
+    const pulsingDot = new PulsingDot(100);
 
     this.map.on("load", async () => {
       if (this.map === null) return;
