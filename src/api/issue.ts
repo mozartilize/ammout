@@ -6,7 +6,7 @@ const titleRegex = /\[(.*),\s(.*)\]\s-\s(.*)/;
 function getLongLatFromTitle(title: string) {
   const result: any[] | null = title.match(titleRegex);
   if (result == null) return [];
-  return [result[1], result[2]];
+  return [parseFloat(result[1]), parseFloat(result[2])];
 }
 
 export async function getAllToPoints() {

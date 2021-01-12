@@ -6,6 +6,7 @@ import Map from "@/components/Map.vue";
 import "@/styles/main.scss";
 
 import Point from "@/Point";
+import { AxiosResponse } from "axios";
 
 @Component({
   components: { Map },
@@ -15,6 +16,9 @@ export default class App extends Vue {
   @State("newPoint") newPoint!: Point | null;
   @Action("TOGGLE_ADDING") toggleAdding!: () => void;
   @Action("SET_NEW_POINT") setNewPoint!: (p: Point) => void;
+  @Action("CREATE_NEW_POINT") createNewPoint!: (
+    p: Point,
+  ) => AxiosResponse | never;
 }
 </script>
 
@@ -26,7 +30,7 @@ export default class App extends Vue {
     <div class="sidebar" :class="{ shown: !!newPoint }">
       <input type="text" name="long" :value="newPoint ? newPoint[0] : ''" />
       <input type="text" name="lat" :value="newPoint ? newPoint[1] : ''" />
-      <button>Save</button
+      <button @click="createNewPoint(newPoint)">Create</button
       ><button @click="() => setNewPoint(null)">Cancel</button>
     </div>
     <Map />

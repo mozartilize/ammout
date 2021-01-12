@@ -16,6 +16,24 @@ export default class Map extends Vue {
   @Action("GET_POINTS_FROM_ISSUES") getPointsFromIssues!: () => void;
   @Action("SET_NEW_POINT") setNewPoint!: (p: Point) => void;
 
+  @Watch("points")
+  onListOfPointsChange(): void {
+    if (this.map == null) return;
+    const source = {
+      type: "FeatureCollection",
+      features: this.points.map((p: Point) => ({
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: p,
+        },
+        properties: {},
+      })),
+    } as GeoJSON.FeatureCollection;
+    const pointsSource = this.map.getSource("points") as GeoJSONSource;
+    if (pointsSource) pointsSource.setData(source);
+  }
+
   @Watch("isAdding")
   onIsAddingChange(val: boolean): void {
     if (this.map == null) return;
@@ -94,15 +112,11 @@ export default class Map extends Vue {
       });
 
       this.map.on("mouseenter", "newPoint", () => {
-        if (this.map) {
-          canvas.style.cursor = "move";
-        }
+        canvas.style.cursor = "move";
       });
 
       this.map.on("mouseleave", "newPoint", () => {
-        if (this.map) {
-          canvas.style.cursor = "";
-        }
+        canvas.style.cursor = "";
       });
 
       this.map.on("mousedown", "newPoint", e => {
@@ -148,21 +162,12 @@ export default class Map extends Vue {
       const canvas = this.map.getCanvasContainer();
       canvas.style.cursor = "";
       this.map.off("mousemove", this.onMove);
-      this.map.off("touchmove", this.onMove);
     }
   }
 
-  onMove(e: mapboxgl.MapTouchEvent | mapboxgl.MapMouseEvent) {
-    if (this.map) {
-      const canvas = this.map.getCanvasContainer();
-      // Set a UI indicator for dragging.
-      canvas.style.cursor = "grabbing";
-
-      // Update the Point feature in `geojson` coordinates
-      // and call setData to the source layer `point` on it.
-      const p = new Point(...e.lngLat.toArray());
-      this.setNewPoint(p);
-    }
+  onMove(e: mapboxgl.MapMouseEvent) {
+    const p = new Point(...e.lngLat.toArray());
+    this.setNewPoint(p);
   }
 
   beforeDestroy(): void {
