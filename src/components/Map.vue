@@ -13,8 +13,10 @@ export default class Map extends Vue {
   @State("points") points!: Point[];
   @State("isAdding") isAdding!: boolean;
   @State("newPoint") newPoint!: Point | null;
+  @State("selectedPoint") selectedPoint!: Point | null;
   @Action("GET_POINTS_FROM_ISSUES") getPointsFromIssues!: () => void;
-  @Action("SET_NEW_POINT") setNewPoint!: (p: Point) => void;
+  @Action("SET_NEW_POINT") setNewPoint!: (p: Point | null) => void;
+  @Action("SET_SELECTED_POINT") setSelectedPoint!: (p: Point | null) => void;
 
   @Watch("points")
   onListOfPointsChange(): void {
@@ -94,6 +96,14 @@ export default class Map extends Vue {
         },
       });
 
+      this.map.on("mouseup", "points", e => {
+        if (e.features && e.features.length > 0) {
+          const pointId = e.features[0].properties?.id;
+          const selectedPoint = this.points.filter(p => p.id == pointId)[0];
+          this.setSelectedPoint(selectedPoint);
+        }
+      });
+
       this.map.addSource("newPoint", {
         type: "geojson",
         data: {
@@ -150,7 +160,7 @@ export default class Map extends Vue {
             type: "Point",
             coordinates: p,
           },
-          properties: {},
+          properties: { id: p.id },
         })),
       } as GeoJSON.FeatureCollection,
     };
