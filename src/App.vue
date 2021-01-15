@@ -6,6 +6,7 @@ import Map from "@/components/Map.vue";
 import "@/styles/main.scss";
 
 import Point from "@/Point";
+import Vote from "@/Vote";
 import { AxiosResponse } from "axios";
 
 @Component({
@@ -15,11 +16,17 @@ export default class App extends Vue {
   @State("isAdding") isAdding!: boolean;
   @State("newPoint") newPoint!: Point | null;
   @State("selectedPoint") selectedPoint!: Point | null;
+  @State("selectedPointVotes") selectedPointVotes!: [
+    number | null,
+    number | null,
+  ];
   @Action("TOGGLE_ADDING") toggleAdding!: () => void;
   @Action("SET_NEW_POINT") setNewPoint!: (p: Point) => void;
   @Action("CREATE_NEW_POINT") createNewPoint!: (
     p: Point,
   ) => AxiosResponse | never;
+  @Action("SET_SELECTED_POINT") setSelectedPoint!: (p: Point | null) => void;
+  @Action("CREATE_NEW_VOTE") createNewVote!: (vote: Vote) => void;
 }
 </script>
 
@@ -49,6 +56,9 @@ export default class App extends Vue {
       class="sidebar"
       :class="{ shown: !!selectedPoint }"
     >
+      <div>
+        <button @click="setSelectedPoint(null)">close</button>
+      </div>
       <input
         type="text"
         name="long"
@@ -63,8 +73,16 @@ export default class App extends Vue {
       />
       <div>
         Vote:
-        <button>Up</button>
-        <button>Down</button>
+        <button
+          @click="createNewVote({ vote: true, pointId: selectedPoint.id })"
+        >
+          Up</button
+        ><span>{{ selectedPointVotes[0] }}</span>
+        <button
+          @click="createNewVote({ vote: false, pointId: selectedPoint.id })"
+        >
+          Down</button
+        ><span>{{ selectedPointVotes[1] }}</span>
       </div>
     </div>
     <Map />

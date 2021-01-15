@@ -29,7 +29,7 @@ export default class Map extends Vue {
           type: "Point",
           coordinates: p,
         },
-        properties: {},
+        properties: { id: p.id },
       })),
     } as GeoJSON.FeatureCollection;
     const pointsSource = this.map.getSource("points") as GeoJSONSource;

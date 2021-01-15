@@ -15,7 +15,7 @@ interface RootState {
   isAdding: boolean;
   newPoint: Point | null;
   selectedPoint: Point | null;
-  vote: Vote | null;
+  selectedPointVotes: [number, number];
 }
 
 function makeNewPointFormData(p: Point): FormData {
@@ -41,7 +41,7 @@ export default new Store({
     isAdding: false,
     newPoint: null,
     selectedPoint: null,
-    vote: null,
+    selectedPointVotes: [0, 0],
   } as RootState,
   mutations: {
     setPoints(state, points: Array<Point>): void {
@@ -59,9 +59,15 @@ export default new Store({
     setSelectedPoint(state, point: Point | null): void {
       state.selectedPoint = point;
     },
-    setVoteForSelectedPoint(state, votes): void {
+    setVotesForSelectedPoint(state, votes): void {
+      if (!state.selectedPoint) state.selectedPointVotes = [0, 0];
+      else state.selectedPointVotes = [votes.upvotes, votes.downvotes];
+    },
+    updateVotesForSelectedPoint(state, vote: boolean) {
       if (!state.selectedPoint) return;
-      state.selectedPoint.setVotes(votes.upvotes, votes.downvotes);
+      state.selectedPointVotes = vote
+        ? [state.selectedPointVotes[0] + 1, state.selectedPointVotes[1]]
+        : [state.selectedPointVotes[0], state.selectedPointVotes[1] + 1];
     },
   },
   actions: {
@@ -85,6 +91,7 @@ export default new Store({
     ): Promise<AxiosResponse> | never {
       const newPointFormData: FormData = makeNewPointFormData(point);
       const resp = await pointApi.createNewPoint(newPointFormData);
+      point.id = resp.data.id;
       commit("appendPoint", point);
       commit("setNewPoint", null);
       return resp;
@@ -99,7 +106,7 @@ export default new Store({
           vote.pointId,
           newVoteFormData,
         );
-        commit("setVote", null);
+        commit("updateVotesForSelectedPoint", vote.vote);
         return resp;
       } else {
         throw new Error("undefined pointId");
@@ -110,8 +117,7 @@ export default new Store({
       if (!state.selectedPoint.id) return;
       const resp = await pointApi.getVotesOfPoint(state.selectedPoint.id);
       const votes = resp.data;
-      console.log(votes);
-      commit("setVoteForSelectedPoint", votes);
+      commit("setVotesForSelectedPoint", votes);
     },
   },
   modules: {},
